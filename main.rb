@@ -1,41 +1,32 @@
+require './planet_items.rb'
 require './planet.rb'
 
-@planets = {
-  mars: Planet.new(name: 'Mars',
-                   market: {
-                     pickles: 100,
-                     coffee: 50
-                   }),
+# TODO
+# pirate raids while in space
+# each planet buys only some things
+# coffee
+# milk
+# chocolate_milk
+# pickles
 
-  cow_land: Planet.new(name: 'Cow Land',
-                       market: {
-                         pickles: 100,
-                         milk: 50,
-                         chocolate_milk: 100
-                       }),
 
-  planet_3: Planet.new(name: 'Planet 3',
-                       market: {
-                         pickles: 100,
-                         milk: 50,
-                         chocolate_milk: 100
-                       })
-}
-
-@money = 1000
+@money = 2000
 @running = true
 @current_planet = :mars
 @inventory = {}
 
 def print_market
-  current_planet_obj.market.each do |thing, price|
-    puts "#{thing} #{price}"
+  current_planet_obj.market[:supply].each do |key, item|
+    puts "this planet sells #{key} #{item.price}"
+  end
+  current_planet_obj.market[:demand].each do |key, item|
+    puts "this planet buys #{key} #{item.price}"
   end
 end
 
 def print_inventory
   @inventory.each do |thing, quantity|
-    puts "#{quantity} #{thing}s"
+    puts "#{quantity} #{thing}"
   end
 end
 
@@ -47,11 +38,37 @@ def status
   puts '====Market===='
   print_market
 end
-def sell_something
 
+def sell_something
+  print_inventory
+  puts  "What do you want to sell?"
+  what = gets.chomp.to_sym
+  if @inventory[what].nil? || @inventory[what] <=0
+    puts "Uh.. you don't have any #{what}"
+    return
+  end
+
+  if current_planet_obj.market[:demand][what].item != what
+    puts "Planet #{@current_planet} doesn't buy #{what}."
+    puts current_planet_obj.market[:demand][what].item
+    return
+  end
+
+  puts "Ok, how many #{what} do you want to sell? You have #{@inventory[what]} #{what} and they sell for #{current_planet_obj.market[:demand][what].price} each."
+
+  count = gets.chomp.to_i
+
+  gain = current_planet_obj.market[:demand][what].price * count
+
+  @inventory[what] -= count
+
+  @money += gain
+
+  puts "Sold #{count} #{what} for $#{gain}."
 end
+
 def current_planet_obj
-  @planets[@current_planet]
+  PLANETS[@current_planet]
 end
 
 def buy_something
@@ -59,11 +76,15 @@ def buy_something
   print_market
   puts 'What would you like to buy?'
   what = gets.chomp.to_sym
-  if current_planet_obj.market.keys.include? what
+  if current_planet_obj.market[:supply].keys.include? what
     puts "How many #{what} would you like to buy?"
     take = gets.chomp.to_i
-    cost = take * current_planet_obj.market[what]
+    cost = take * current_planet_obj.market[:supply][what].price
     puts "you are buying #{take} #{what} for #{cost}"
+    if cost > @money
+      puts "wait a second, you don't have enough money, you only have $#{@money}"
+      return
+    end
     @inventory[what] ||= 0
     @inventory[what] += take
     @money -= cost
@@ -73,15 +94,22 @@ def buy_something
 end
 
 def zoom_zoom
-  destinations = @planets
+  destinations = PLANETS
   puts 'You can fly to:'
-  destinations.each do |key, dest|
-    puts dest.name
+  current_planet_obj.destinations.each do |dest|
+    puts dest
   end
-  puts "Where to? [#{destinations.keys.map(&:to_s).flatten}]"
+  puts "Where to? [#{current_planet_obj.destinations.map(&:to_s).flatten.join(", ")}]"
   dest = gets.chomp
-  puts "You flew to #{dest} for $500"
-  @money -= 500
+
+  flight_cost = 500
+
+  if @money < flight_cost
+    puts "Not enough money for the flight! Sorry, it costs #{flight_cost} and you only have #{@money}"
+    return
+  end
+  puts "You flew to #{dest} for $#{flight_cost}"
+  @money -= flight_cost
   @current_planet = dest.to_sym
 end
 
@@ -95,7 +123,7 @@ def main
 
   @wrong_attempts = 0
   while @running
-    puts 'What would you like to do? [status,buy,zoom, exit]'
+    puts 'What would you like to do? [status,buy,sell, zoom, exit]'
     input = gets.chomp
 
     case input
@@ -107,20 +135,18 @@ def main
       buy_something
     when 'zoom'
       zoom_zoom
+     when 'sell'
+      sell_something
     else
-      @wrong_attempts +=1
+      @wrong_attempts += 1
     end
 
-    if @wrong_attempts == 2
-      puts "Uhh are you ok?"
-    end
+    puts 'Uhh are you ok?' if @wrong_attempts == 2
 
-    if @wrong_attempts == 5
-      puts "Uh... I think I should call someone."
-    end
+    puts 'Uh... I think I should call someone.' if @wrong_attempts == 5
 
     if @wrong_attempts == 10
-      puts "You are coocoo for pickle flavored cocoa puffs. Space ship crashed on planet pickle flavored cocoa puffs."
+      puts 'You are coocoo for pickle flavored cocoa puffs. Space ship crashed on planet pickle flavored cocoa puffs.'
       @running = false
     end
 
