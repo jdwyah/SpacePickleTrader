@@ -145,16 +145,14 @@ def pew_pew_battle
   bad_guy = bad_guys.sample
   # tell player the bad guys are there
 
-  puts "🛸"  
+  puts '🛸' 
   puts "🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀"
-  puts "All yu wanted to do was zoom. YOU didn't want to b'ow things up (I hope). But the Celestial Cow Beings had other ideas."
+  puts "All yu wanted to do was zoom. YOU didn't want to blow things up (I hope). But the Celestial Cow Beings had other ideas."
   puts "#{@name} meet #{bad_guy[:description]}. You may now commence killing and pilaging each other."
 
 
-
-  # ask user if they want to run or fight
   puts "Do you want to [run, fight]?"
-  input = gets.chomp
+  input= gets.chomp
 
   if input == 'fight'
     fight(bad_guy)
@@ -166,7 +164,6 @@ def pew_pew_battle
   else
     puts "???" 
   end
-  
 end
 
 def fight(bad_guy)
@@ -175,40 +172,39 @@ def fight(bad_guy)
 
 
     # if no cow goddesses
-    
-  #   bad_guy_shields = 2
-  #   bad_guy_lasers = 2
+ #  bad_guy_shields = 2
+  bad_guy_lasers = 2
   our_lasers = 1
 
-  puts "#{@lazer_level.to_f} #{bad_guy[:shields].to_f}"
+  puts "Our Lazer #{@lazer_level.to_f} Their Shield #{bad_guy[:shields].to_f} Bad Hull #{bad_guy[:hull_strength]}"
  
   we_hit = (100 * (@lazer_level.to_f / bad_guy[:shields].to_f)).to_i
-  bad_guy[:hull_strength] -= we_hit
+ bad_guy[:hull_strength] -= we_hit
 
-  puts "Lasers fl y!  You do #{we_hit} damage."
-  
-  they_hit = (100 * (bad_guy[:lasers].to_f / @shield_level.to_f)).to_i
+  puts "Lasers fly!  You do #{we_hit} damage."
+
+
+  puts "Their Lazer #{bad_guy[:lasers]} Our Shield #{@shield_level.to_f} #{@hull_strength}"
+
+
   @hull_strength -= they_hit
 
-  puts "Lasers fl y!  They do #{they_hit} damage."
+  puts "Lasers fly!  They do #{they_hit} damage."
 
   
-    
-#  we_hit_them = 100* our_lasers / bad_guy_shields # = 50 hits
-  #   they_hit_us = 100 * their /our shiels = #200 hits 
+    #   they_hit_us = 100 * their /our shiels = #200 hits 
 
   #   health_reactor_core_bar = 1000
-  
-#   round 1:  we hit either 50 or 0 if we miss
-  #   round 1:  they hit either 200 or 0 if we miss
- # i we get to half health... they take all the cargo. 
-  
-  # do you want to run aw
-
 end
 
+#   #   round 1:  they hit either 200 or 0 if we miss
+ # i we get to half health... they take all the cargo. 
+   
+# do you want to run aw
+
+
 def zoom_zoom
-  destinations = PLANETS
+  desinations = PLANETS
   puts 'You can fly to:'
   current_planet_obj.destinations.each do |dest|
     puts dest
@@ -217,7 +213,7 @@ def zoom_zoom
   dest = gets.chomp
   pew_pew_battle
   
-  flight_cost = 500
+flight_cost = 500
 
   if @money < flight_cost
     puts "Not enough money for the flight! Sorry, it costs #{flight_cost} and you only have #{@money}"
@@ -225,19 +221,19 @@ def zoom_zoom
   end
   @money -= flight_cost
 @current_planet = dest.to_sym
-  
-  puts "🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀"
+    
+puts "🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀"
   puts "You flew to #{dest} for $#{flight_cost}"
-  current_planet_obj.print_welcome
+  curent_planet_obj.print_welcome
   puts "🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀'🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀"
 end
 
 def underline_first(word, count =1)
-  word.slice(0,count).underline + word[count..-1]
+  word.slice(0,count).underline +  word[count..-1]
 end
 
 def main
-  puts 'Welcome to SpacePickleTrader'
+   puts 'Welcome to SpacePickleTrader'
   puts 'What is your name?'
 
   @name = gets.chomp
@@ -258,8 +254,8 @@ def main
       buy_something
     when 'zoom', 'z'
      zoom_zoom
-     when 'sell', 's'
-      sell_something
+      when 'sell', 's'
+     sell_something
     else
       @wrong_attempts += 1
     end
